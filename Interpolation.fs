@@ -59,7 +59,7 @@ let rec newtonInterpolationFunc xy currentX =
         (currentCoef)*(currentxFunc) + (newtonInterpolationFunc (takeHeadSeq xy) currentX)
 
 let rec newtonInterpolation xy currentStep incStep =
-    if currentStep < snd (Seq.last xy) then
+    if currentStep < fst (Seq.last xy) then
         let nextValue = newtonInterpolation xy (currentStep + incStep) incStep
         let currnetValue = seq{currentStep, newtonInterpolationFunc xy currentStep}
         Seq.append currnetValue nextValue

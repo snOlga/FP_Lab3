@@ -87,4 +87,24 @@ let UsingTest () =
     let expected = seq {(1.57, 1.00); (2.57, 0.36); (3.57, -0.27)}
     Assert.True(compareResult expected oneMoreRes)
     
+[<Test>]
+let UsingTest2 () =
+    let firstPoint = (0.00, 0.00)
+    let secondPoint = (1.571, 1.00)
+
+    let seqCreate someSeq point = Seq.append someSeq (Seq.singleton point)
+    let result someSeq = newtonInterpolation someSeq (fst (Seq.head someSeq)) 1
+
+    let firstSeq = seqCreate (Seq.singleton firstPoint) secondPoint
+    let firstRes = result firstSeq
+
+    let expected = seq {(0.0, 0.0); (1.0, 0.636); (2.0, 1.270)}
+    Assert.True(compareResult expected firstRes)
+
+    let oneMorePoint = (3.142, 0.00)
+    let oneMoreSeq = seqCreate firstSeq oneMorePoint
+    let oneMoreRes = result (Seq.tail oneMoreSeq)
+
+    let expected = seq {(1.57, 1.00); (2.57, 0.36); (3.57, -0.27)}
+    Assert.True(compareResult expected oneMoreRes)
     
