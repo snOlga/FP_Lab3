@@ -29,6 +29,7 @@ let rec linearInterpolation xyPairs (currentStep: float) (incStep: float) =
                 resultSeq
                 (linearInterpolation (Seq.tail xyPairs) (currentStep + incStep) incStep)
 
+//------------------------Newton interpolation
 let swapSeq someSeq =
     Seq.append (Seq.tail someSeq) (Seq.singleton (Seq.head someSeq))
 

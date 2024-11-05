@@ -44,5 +44,4 @@ let main _ =
         printfn "Newton interpolation:\n"
         for pair in newton do
             printfn "%A" pair
-
     0
