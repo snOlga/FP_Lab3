@@ -20,6 +20,27 @@ let Test1 () =
             yield 0.000
             yield 1
         }
-    let actual = linearInterpolationWithPairs (prepareXY x y) 0.00 1.00 Seq.empty
+    let actual = linearInterpolation (prepareXY x y) 0.00 1.00
     let expected = seq {(0.0, 0.0); (1.0, 0.6365372374); (2.0, 1.273074475)}
     Assert.True(compareResult expected actual)
+
+[<Test>]
+let Test2 () =
+    let x =
+        seq {
+            yield 0.000
+            yield 1
+            yield 4
+            yield 6
+        }
+    let y =
+        seq {
+            yield 0.000
+            yield 2
+            yield 5
+            yield 9
+        }
+
+    let actual = newtonInterpolation (Seq.zip x y) 5.00
+    let expected = 6.5
+    Assert.AreEqual(expected, actual)
