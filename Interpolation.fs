@@ -31,7 +31,7 @@ let rec linearInterpolation xyPairs (currentStep: float) (incStep: float) =
 
 let swapSeq someSeq =
     Seq.append (Seq.tail someSeq) (Seq.singleton (Seq.head someSeq))
-    
+
 let takeHeadSeq someSeq = 
     Seq.take ((Seq.length someSeq) - 1) someSeq
 
@@ -50,10 +50,18 @@ let rec xFunc (xy:seq<float*float>) currentX =
         | 1 -> (currentX - fst (Seq.last xy))
         | _ -> (currentX - fst (Seq.last xy)) * (xFunc (Seq.take ((Seq.length xy) - 1) xy) currentX)
 
-let rec newtonInterpolation xy currentX =
+let rec newtonInterpolationFunc xy currentX =
     match Seq.length xy with
     | 1 -> snd (Seq.head xy)
     | _ -> 
         let currentCoef = coefs xy (Seq.length xy)
         let currentxFunc = xFunc (takeHeadSeq xy) currentX
-        (currentCoef)*(currentxFunc) + (newtonInterpolation (takeHeadSeq xy) currentX)
+        (currentCoef)*(currentxFunc) + (newtonInterpolationFunc (takeHeadSeq xy) currentX)
+
+let rec newtonInterpolation xy currentStep incStep =
+    if currentStep < snd (Seq.last xy) then
+        let nextValue = newtonInterpolation xy (currentStep + incStep) incStep
+        let currnetValue = seq{currentStep, newtonInterpolationFunc xy currentStep}
+        Seq.append currnetValue nextValue
+    else
+        seq{currentStep, newtonInterpolationFunc xy currentStep}

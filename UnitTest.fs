@@ -41,6 +41,27 @@ let Test2 () =
             yield 9
         }
 
-    let actual = newtonInterpolation (Seq.zip x y) 5.00
+    let actual = newtonInterpolationFunc (Seq.zip x y) 5.00
     let expected = 6.5
     Assert.AreEqual(expected, actual)
+
+[<Test>]
+let Test3 () =
+    let x =
+        seq {
+            yield 0.000
+            yield 1
+            yield 4
+            yield 6
+        }
+    let y =
+        seq {
+            yield 0.000
+            yield 2
+            yield 5
+            yield 9
+        }
+
+    let actual = newtonInterpolation (Seq.zip x y) 0.00 1.00
+    let expected = seq {(0.0, 0.0); (1.0, 2); (2.0, 3.2); (3.0, 4.05); (4.0, 5.0); (5.0, 6.5); (6.0, 9.0)}
+    Assert.True(compareResult expected actual)
