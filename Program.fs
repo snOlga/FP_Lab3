@@ -3,12 +3,10 @@ module Program
 open System
 open Interpolation
 
-let readPoint prompt =
-    printfn "%s" prompt
-    printf "X> "
-    let x = Console.ReadLine() |> float
-    printf "Y> "
-    let y = Console.ReadLine() |> float
+let readPoint () =
+    let point = Console.ReadLine().Split(" ")
+    let x = point[0] |> float
+    let y = point[1] |> float
     (x, y)
 
 let seqCreate someSeq point = Seq.append someSeq (Seq.singleton point)
@@ -19,29 +17,35 @@ let resultLinear someSeq step =
 let resultNewton someSeq step = 
     newtonInterpolation someSeq (fst (Seq.head someSeq)) step
 
+let rec doWhileRecursively step currentPointsForLinear currentPointsForNewton =
+    let linear = resultLinear currentPointsForLinear step
+    let newton = resultNewton currentPointsForNewton step
+    printfn "Linear:\n"
+    for pair in linear do
+        printfn "%A" pair
+    printfn "Newton:\n"
+    for pair in newton do
+        printfn "%A" pair
+    let newPoint = readPoint ()
+    let newSeqForLinear= seqCreate currentPointsForLinear newPoint
+    let newSeqForNewton= seqCreate currentPointsForNewton newPoint
+    doWhileRecursively step (Seq.tail newSeqForLinear) (Seq.tail newSeqForNewton)
+
 [<EntryPoint>]
 let main _ = 
     printf "Step is: "
     let step = Console.ReadLine() |> float
 
-    let firstPoint = readPoint "Enter the first point:"
-    let secondPoint = readPoint "Enter the second point:"
+    let firstPoint = readPoint ()
+    let secondPoint = readPoint ()
 
-    let mutable someSeq = seqCreate (Seq.singleton firstPoint) secondPoint
+    let someSeq = seqCreate (Seq.singleton firstPoint) secondPoint
     let linearResult = resultLinear someSeq step
 
-    printfn "\nLinear interpolation result:\n%A" linearResult
+    printfn "\nLinear:\n%A" linearResult
 
-    while true do
-        let newPoint = readPoint "Enter the next point:"
-        someSeq <- seqCreate someSeq newPoint
-        let linear = resultLinear someSeq step
-        let newton = resultNewton someSeq step
-        printfn "---"
-        printfn "Linear interpolation:\n"
-        for pair in linear do
-            printfn "%A" pair
-        printfn "Newton interpolation:\n"
-        for pair in newton do
-            printfn "%A" pair
+    let newPoint = readPoint ()
+    let newSeqForLinear= seqCreate someSeq newPoint
+    let newSeqForNewton= seqCreate someSeq newPoint
+    doWhileRecursively step (Seq.tail newSeqForLinear) newSeqForNewton
     0
