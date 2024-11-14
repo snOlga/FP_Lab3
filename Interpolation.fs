@@ -7,7 +7,7 @@ let prepareXY (x: seq<float>) (y: seq<float>) =
     let xy = Seq.zip x y
     Seq.pairwise xy
 
-let rec linearInterpolation xyPairs (currentStep: float) (incStep: float) =
+let rec doInterpolation xyPairs (currentStep: float) (incStep: float) =
     match Seq.length xyPairs with
     | 0 -> Seq.empty
     | _ ->
@@ -23,11 +23,14 @@ let rec linearInterpolation xyPairs (currentStep: float) (incStep: float) =
 
         if currentStep >= (fst (fst (Seq.head xyPairs)))
            && currentStep <= (fst (snd (Seq.head xyPairs))) then
-            Seq.append resultSeq (linearInterpolation xyPairs (currentStep + incStep) incStep )
+            Seq.append resultSeq (doInterpolation xyPairs (currentStep + incStep) incStep )
         else
             Seq.append
                 resultSeq
-                (linearInterpolation (Seq.tail xyPairs) (currentStep + incStep) incStep)
+                (doInterpolation (Seq.tail xyPairs) (currentStep + incStep) incStep)
+
+let linearInterpolation xy (currentStep: float) (incStep: float) =
+    doInterpolation (Seq.pairwise xy) currentStep incStep
 
 //------------------------Newton interpolation
 let swapSeq someSeq =

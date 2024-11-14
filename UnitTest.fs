@@ -20,7 +20,7 @@ let Test1 () =
             yield 0.000
             yield 1
         }
-    let actual = linearInterpolation (prepareXY x y) 0.00 1.00
+    let actual = linearInterpolation (Seq.zip x y) 0.00 1.00
     let expected = seq {(0.0, 0.0); (1.0, 0.6365372374); (2.0, 1.273074475)}
     Assert.True(compareResult expected actual)
 
@@ -72,7 +72,7 @@ let UsingTest () =
     let secondPoint = (1.571, 1.00)
 
     let seqCreate someSeq point = Seq.append someSeq (Seq.singleton point)
-    let result someSeq = linearInterpolation (Seq.pairwise someSeq) (fst (Seq.head someSeq)) 1
+    let result someSeq = linearInterpolation someSeq (fst (Seq.head someSeq)) 1
 
     let firstSeq = seqCreate (Seq.singleton firstPoint) secondPoint
     let firstRes = result firstSeq
@@ -85,7 +85,7 @@ let UsingTest () =
     let oneMoreRes = result (Seq.tail oneMoreSeq)
 
     let expected = seq {(1.57, 1.00); (2.57, 0.36); (3.57, -0.27)}
-    Assert.True(compareResult expected oneMoreRes)
+    Assert.True(compareResult expected oneMoreRes) 
     
 [<Test>]
 let UsingTest2 () =

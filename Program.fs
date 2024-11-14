@@ -12,21 +12,16 @@ let readPoint () =
 
 let seqCreate someSeq point = Seq.append someSeq (Seq.singleton point)
 
-let resultLinear someSeq step = 
-    linearInterpolation (Seq.pairwise someSeq) (fst (Seq.head someSeq)) step
-
-let resultNewton someSeq step = 
-    newtonInterpolation someSeq (fst (Seq.head someSeq)) step
+let culculateAndPrint approxName someSeq step approx =
+    let result = approx someSeq (fst (Seq.head someSeq)) step
+    printfn "%s\n" approxName
+    for pair in result do
+        printfn "%A" pair
 
 let rec doWhileRecursively step currentPointsForLinear currentPointsForNewton =
-    let linear = resultLinear currentPointsForLinear step
-    let newton = resultNewton currentPointsForNewton step
-    printfn "Linear:\n"
-    for pair in linear do
-        printfn "%A" pair
-    printfn "Newton:\n"
-    for pair in newton do
-        printfn "%A" pair
+    culculateAndPrint "Linear" currentPointsForLinear step linearInterpolation
+    culculateAndPrint "Newton" currentPointsForNewton step newtonInterpolation
+    
     let newPoint = readPoint ()
     let newSeqForLinear= seqCreate currentPointsForLinear newPoint
     let newSeqForNewton= seqCreate currentPointsForNewton newPoint
@@ -43,24 +38,24 @@ let main (args) =
         let secondPoint = readPoint ()
 
         let someSeq = seqCreate (Seq.singleton firstPoint) secondPoint
-        let linearResult = resultLinear someSeq step
+        //let linearResult = resultLinear someSeq step
 
-        printfn "\nLinear:\n%A" linearResult
+        //printfn "\nLinear:\n%A" linearResult
 
         let newPoint = readPoint ()
         let newSeqForLinear= seqCreate someSeq newPoint
         let newSeqForNewton= seqCreate someSeq newPoint
         doWhileRecursively step (Seq.tail newSeqForLinear) newSeqForNewton
-    | 1 -> 
-        let pointsStr = File.ReadAllLines(args[0])
-        let points = Seq.ofArray (Array.map (fun (str: string) -> ((str.Split(" ")[0] |> float), (str.Split(" ")[1] |> float))) (Array.tail pointsStr))
-        let step = (Array.head pointsStr) |> float
-        let linearResult = resultLinear points step
-        let newtonResult = resultNewton points step
-        printfn "Linear:\n"
-        for pair in linearResult do
-            printfn "%A" pair
-        printfn "Newton:\n"
-        for pair in newtonResult do
-            printfn "%A" pair
+    // | 1 -> 
+    //     let pointsStr = File.ReadAllLines(args[0])
+    //     let points = Seq.ofArray (Array.map (fun (str: string) -> ((str.Split(" ")[0] |> float), (str.Split(" ")[1] |> float))) (Array.tail pointsStr))
+    //     let step = (Array.head pointsStr) |> float
+    //     let linearResult = resultLinear points step
+    //     let newtonResult = resultNewton points step
+    //     printfn "Linear:\n"
+    //     for pair in linearResult do
+    //         printfn "%A" pair
+    //     printfn "Newton:\n"
+    //     for pair in newtonResult do
+    //         printfn "%A" pair
     0
